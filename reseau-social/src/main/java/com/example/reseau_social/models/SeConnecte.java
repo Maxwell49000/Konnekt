@@ -34,7 +34,7 @@ public class SeConnecte {
     private Utilisateur destinataire;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "statut", nullable = false)
+    @Column(name = "statut", nullable = false, length = 20)
     private StatutConnexion statut;
 
     @Column(name = "date_creation", nullable = false)
@@ -42,7 +42,7 @@ public class SeConnecte {
 
     // Enum for statut
     public enum StatutConnexion {
-        EN_ATTENTE, ACCEPTEE, BLOQUEE
+        EN_ATTENTE, ACCEPTEE, REFUSEE, BLOQUEE
     }
 
     // Constructors

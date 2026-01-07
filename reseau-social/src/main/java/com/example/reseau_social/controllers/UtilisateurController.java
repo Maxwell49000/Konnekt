@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.reseau_social.dtos.CreateUtilisateurDTO;
+import com.example.reseau_social.models.Skill;
 import com.example.reseau_social.models.Utilisateur;
+import com.example.reseau_social.services.SkillService;
 import com.example.reseau_social.services.UtilisateurService;
 
 import jakarta.validation.Valid;
@@ -30,6 +32,9 @@ public class UtilisateurController {
 
     @Autowired
     private UtilisateurService utilisateurService;
+
+    @Autowired
+    private SkillService skillService;
 
     // CREATE
     @PostMapping
@@ -134,6 +139,22 @@ public class UtilisateurController {
     public ResponseEntity<Utilisateur> updateVisibility(@PathVariable Integer id, @RequestParam Boolean visible) {
         try {
             Utilisateur updated = utilisateurService.updateVisibility(id, visible);
+            return ResponseEntity.ok(updated);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    // UPDATE - Skills
+    @PutMapping("/{id}/skills")
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<Utilisateur> updateSkills(@PathVariable Integer id, @RequestBody List<Integer> skillIds) {
+        try {
+            java.util.Set<Skill> skills = new java.util.HashSet<>();
+            for (Integer skillId : skillIds) {
+                skillService.getSkillById(skillId).ifPresent(skills::add);
+            }
+            Utilisateur updated = utilisateurService.updateSkills(id, skills);
             return ResponseEntity.ok(updated);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

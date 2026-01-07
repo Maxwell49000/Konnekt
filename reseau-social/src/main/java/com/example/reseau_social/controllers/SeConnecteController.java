@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.reseau_social.dtos.ErrorResponse;
 import com.example.reseau_social.models.SeConnecte;
 import com.example.reseau_social.models.SeConnecte.StatutConnexion;
 import com.example.reseau_social.services.SeConnecteService;
@@ -30,12 +31,12 @@ public class SeConnecteController {
 
     // CREATE - Send connection request
     @PostMapping("/request/{demandeurId}/{destinataireId}")
-    public ResponseEntity<SeConnecte> sendConnectionRequest(@PathVariable Integer demandeurId, @PathVariable Integer destinataireId) {
+    public ResponseEntity<?> sendConnectionRequest(@PathVariable Integer demandeurId, @PathVariable Integer destinataireId) {
         try {
             SeConnecte created = seConnecteService.sendConnectionRequest(demandeurId, destinataireId);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
 
@@ -97,6 +98,13 @@ public class SeConnecteController {
         return ResponseEntity.ok(connexions);
     }
 
+    // READ - Get all connections (any status) for a user
+    @GetMapping("/all/{utilisateurId}")
+    public ResponseEntity<List<SeConnecte>> getAllConnections(@PathVariable Integer utilisateurId) {
+        List<SeConnecte> connexions = seConnecteService.getAllConnectionsForUtilisateur(utilisateurId);
+        return ResponseEntity.ok(connexions);
+    }
+
     // UPDATE - Accept connection
     @PutMapping("/{id}/accept")
     public ResponseEntity<SeConnecte> acceptConnection(@PathVariable Integer id) {
@@ -124,6 +132,17 @@ public class SeConnecteController {
     public ResponseEntity<SeConnecte> updateStatus(@PathVariable Integer id, @RequestParam StatutConnexion statut) {
         try {
             SeConnecte updated = seConnecteService.updateStatus(id, statut);
+            return ResponseEntity.ok(updated);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    // UPDATE - Refuse connection
+    @PutMapping("/{id}/refuse")
+    public ResponseEntity<SeConnecte> refuseConnection(@PathVariable Integer id) {
+        try {
+            SeConnecte updated = seConnecteService.updateStatus(id, StatutConnexion.REFUSEE);
             return ResponseEntity.ok(updated);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

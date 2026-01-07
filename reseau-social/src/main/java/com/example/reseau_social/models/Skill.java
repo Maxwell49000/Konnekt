@@ -3,6 +3,8 @@ package com.example.reseau_social.models;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,6 +25,7 @@ public class Skill {
     private String libelle;
 
     @ManyToMany(mappedBy = "skills")
+    @JsonIgnore
     private Set<Utilisateur> utilisateurs = new HashSet<>();
 
     // Constructors

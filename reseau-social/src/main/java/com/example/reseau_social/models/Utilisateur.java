@@ -3,6 +3,8 @@ package com.example.reseau_social.models;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,9 +55,11 @@ public class Utilisateur {
     private Set<Skill> skills = new HashSet<>();
 
     @OneToMany(mappedBy = "demandeur", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<SeConnecte> demandesEnvoyees = new HashSet<>();
 
     @OneToMany(mappedBy = "destinataire", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<SeConnecte> demandesRecues = new HashSet<>();
 
     // Constructors

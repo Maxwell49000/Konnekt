@@ -17,8 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.reseau_social.dtos.CreateNotificationDTO;
+import com.example.reseau_social.dtos.NotificationResponseDTO;
 import com.example.reseau_social.models.Notification;
 import com.example.reseau_social.services.NotificationService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/notifications")
@@ -29,32 +33,40 @@ public class NotificationController {
     private NotificationService notificationService;
 
     @PostMapping
-    public ResponseEntity<Notification> create(@RequestBody Notification n) {
+    public ResponseEntity<NotificationResponseDTO> create(@Valid @RequestBody CreateNotificationDTO dto) {
+        Notification n = notificationService.createNotificationFromDTO(dto);
         Notification created = notificationService.createNotification(n);
-        return ResponseEntity.created(URI.create("/api/notifications/" + created.getId())).body(created);
+        NotificationResponseDTO response = notificationService.notificationToResponseDTO(created);
+        return ResponseEntity.created(URI.create("/api/notifications/" + created.getId())).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<Notification>> list() {
-        return ResponseEntity.ok(notificationService.getAll());
+    public ResponseEntity<List<NotificationResponseDTO>> list() {
+        List<Notification> notifications = notificationService.getAll();
+        List<NotificationResponseDTO> responses = notificationService.notificationsToResponseDTOList(notifications);
+        return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Notification> get(@PathVariable String id) {
+    public ResponseEntity<NotificationResponseDTO> get(@PathVariable String id) {
         Optional<Notification> n = notificationService.getById(id);
-        return n.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return n.map(notif -> ResponseEntity.ok(notificationService.notificationToResponseDTO(notif)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Notification>> byUser(@PathVariable Integer userId) {
-        return ResponseEntity.ok(notificationService.findByUser(userId));
+    public ResponseEntity<List<NotificationResponseDTO>> byUser(@PathVariable Integer userId) {
+        List<Notification> notifications = notificationService.findByUser(userId);
+        List<NotificationResponseDTO> responses = notificationService.notificationsToResponseDTOList(notifications);
+        return ResponseEntity.ok(responses);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Notification> update(@PathVariable String id, @RequestBody Notification details) {
+    public ResponseEntity<NotificationResponseDTO> update(@PathVariable String id, @RequestBody Notification details) {
         try {
             Notification updated = notificationService.updateNotification(id, details);
-            return ResponseEntity.ok(updated);
+            NotificationResponseDTO response = notificationService.notificationToResponseDTO(updated);
+            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

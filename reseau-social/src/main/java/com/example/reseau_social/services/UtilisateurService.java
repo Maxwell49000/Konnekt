@@ -2,11 +2,14 @@ package com.example.reseau_social.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.reseau_social.models.Skill;
 import com.example.reseau_social.models.Utilisateur;
+import com.example.reseau_social.repositories.SkillRepository;
 import com.example.reseau_social.repositories.UtilisateurRepository;
 
 import jakarta.transaction.Transactional;
@@ -17,6 +20,9 @@ public class UtilisateurService {
 
     @Autowired
     private UtilisateurRepository utilisateurRepository;
+
+    @Autowired
+    private SkillRepository skillRepository;
 
     // CREATE
     public Utilisateur createUtilisateur(Utilisateur utilisateur) {
@@ -93,6 +99,16 @@ public class UtilisateurService {
         return utilisateurRepository.findById(id)
                 .map(utilisateur -> {
                     utilisateur.setVisibiliteProfil(visible);
+                    return utilisateurRepository.save(utilisateur);
+                })
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé avec l'ID: " + id));
+    }
+
+    // UPDATE SKILLS
+    public Utilisateur updateSkills(Integer id, Set<Skill> skills) {
+        return utilisateurRepository.findById(id)
+                .map(utilisateur -> {
+                    utilisateur.setSkills(skills);
                     return utilisateurRepository.save(utilisateur);
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé avec l'ID: " + id));

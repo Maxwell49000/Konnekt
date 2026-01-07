@@ -18,9 +18,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.reseau_social.dtos.ConversationResponseDTO;
+import com.example.reseau_social.dtos.CreateConversationDTO;
+import com.example.reseau_social.dtos.CreateMessageDTO;
 import com.example.reseau_social.models.Conversation;
 import com.example.reseau_social.models.Message;
 import com.example.reseau_social.services.ConversationService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/conversations")
@@ -31,44 +36,56 @@ public class ConversationController {
     private ConversationService conversationService;
 
     @PostMapping
-    public ResponseEntity<Conversation> create(@RequestBody Conversation conv) {
-        conv.setCreatedAt(conv.getCreatedAt() == null ? Instant.now() : conv.getCreatedAt());
+    public ResponseEntity<ConversationResponseDTO> create(@Valid @RequestBody CreateConversationDTO dto) {
+        Conversation conv = conversationService.createConversationFromDTO(dto);
         Conversation created = conversationService.createConversation(conv);
-        return ResponseEntity.created(URI.create("/api/conversations/" + created.getId())).body(created);
+        ConversationResponseDTO response = conversationService.conversationToResponseDTO(created);
+        return ResponseEntity.created(URI.create("/api/conversations/" + created.getId())).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<Conversation>> list() {
-        return ResponseEntity.ok(conversationService.getAllConversations());
+    public ResponseEntity<List<ConversationResponseDTO>> list() {
+        List<Conversation> conversations = conversationService.getAllConversations();
+        List<ConversationResponseDTO> responses = conversationService.conversationsToResponseDTOList(conversations);
+        return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Conversation> get(@PathVariable String id) {
+    public ResponseEntity<ConversationResponseDTO> get(@PathVariable String id) {
         Optional<Conversation> c = conversationService.getById(id);
-        return c.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return c.map(conv -> ResponseEntity.ok(conversationService.conversationToResponseDTO(conv)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/participant/{userId}")
-    public ResponseEntity<List<Conversation>> byParticipant(@PathVariable Integer userId) {
-        return ResponseEntity.ok(conversationService.findByParticipant(userId));
+    public ResponseEntity<List<ConversationResponseDTO>> byParticipant(@PathVariable Integer userId) {
+        List<Conversation> conversations = conversationService.findByParticipant(userId);
+        List<ConversationResponseDTO> responses = conversationService.conversationsToResponseDTOList(conversations);
+        return ResponseEntity.ok(responses);
     }
 
     @PostMapping("/{id}/messages")
-    public ResponseEntity<Conversation> addMessage(@PathVariable String id, @RequestBody Message message) {
-        message.setCreatedAt(message.getCreatedAt() == null ? Instant.now() : message.getCreatedAt());
+    public ResponseEntity<ConversationResponseDTO> addMessage(@PathVariable String id, @Valid @RequestBody CreateMessageDTO dto) {
         try {
+            Message message = new Message();
+            message.setText(dto.getContenu());
+            message.setSenderId(dto.getAuteurId());
+            message.setCreatedAt(Instant.now());
+            
             Conversation updated = conversationService.addMessage(id, message);
-            return ResponseEntity.ok(updated);
+            ConversationResponseDTO response = conversationService.conversationToResponseDTO(updated);
+            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Conversation> update(@PathVariable String id, @RequestBody Conversation details) {
+    public ResponseEntity<ConversationResponseDTO> update(@PathVariable String id, @RequestBody Conversation details) {
         try {
             Conversation updated = conversationService.updateConversation(id, details);
-            return ResponseEntity.ok(updated);
+            ConversationResponseDTO response = conversationService.conversationToResponseDTO(updated);
+            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
