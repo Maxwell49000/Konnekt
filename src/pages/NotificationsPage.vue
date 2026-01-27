@@ -82,7 +82,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/authStore';
 import { useNotificationStore } from '../stores/notificationStore';
@@ -91,8 +91,9 @@ const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
 const router = useRouter();
 
-const notifications = notificationStore.notifications;
-const unreadCount = notificationStore.unreadCount;
+// Use computed to ensure reactivity when store updates
+const notifications = computed(() => notificationStore.notifications);
+const unreadCount = computed(() => notificationStore.unreadCount);
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
@@ -135,15 +136,18 @@ const isNotificationRead = (notif) => {
 };
 
 const markAsRead = async (id) => {
+  console.log('[NotificationsPage] Marking as read:', id);
   await notificationStore.markAsRead(id);
 };
 
 const markAllAsRead = async () => {
+  console.log('[NotificationsPage] Marking all as read');
   const userId = authStore.user?.idUtilisateur || authStore.user?.id;
   await notificationStore.markAllAsRead(userId);
 };
 
 const deleteNotification = async (id) => {
+  console.log('[NotificationsPage] Deleting notification:', id);
   await notificationStore.deleteNotification(id);
 };
 
@@ -154,7 +158,7 @@ const handleNotificationClick = (notif) => {
   }
 
   // Rediriger en fonction du type de notification
-  if (notif.type === 'connection_request') {
+  if (notif.type === 'connection_request' || notif.type === 'connection_accepted') {
     router.push('/connections');
   } else if (notif.type === 'like' || notif.type === 'comment' || notif.type === 'post') {
     router.push('/dashboard');

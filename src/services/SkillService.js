@@ -13,7 +13,7 @@ const SkillService = {
 
     async getByLibelle(libelle) {
         try {
-            const res = await apiClient.get(`/skills/libelle/${encodeURIComponent(libelle)}`);
+            const res = await apiClient.get(`/skills/by-libelle?libelle=${encodeURIComponent(libelle)}`);
             return res.data;
         } catch (err) {
             // return null on 404

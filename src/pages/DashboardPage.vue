@@ -262,7 +262,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/authStore';
 import { usePostStore } from '../stores/postStore';
@@ -301,10 +301,9 @@ const formatDate = (dateString) => {
 };
 
 const loadPostsAndAuthors = async () => {
-  await postStore.fetchPosts();
-  
   // Récupérer l'ID de l'utilisateur connecté
   const currentUserId = authStore.user?.idUtilisateur || authStore.user?.id;
+  await postStore.fetchPosts(currentUserId);
   
   // Charger les likes actuels de l'utilisateur
   likedPosts.value = new Set();
@@ -384,13 +383,21 @@ const loadPostsAndAuthors = async () => {
   }
 };
 
+// Ensure we load the feed only after the authenticated user is available.
 onMounted(() => {
-  loadPostsAndAuthors().catch(err => console.error(err));
-  
-  // Load notifications on mount
-  const userId = authStore.user?.idUtilisateur || authStore.user?.id;
-  if (userId) {
-    notificationStore.fetchNotificationsByUser(userId).catch(err => console.error(err));
+  const currentUserId = authStore.user?.idUtilisateur || authStore.user?.id;
+  if (currentUserId) {
+    loadPostsAndAuthors().catch(err => console.error(err));
+    notificationStore.fetchNotificationsByUser(currentUserId).catch(err => console.error(err));
+  }
+});
+
+// If user is set asynchronously (login after mount), react and load feed then.
+watch(() => authStore.user, (newUser) => {
+  const uid = newUser?.idUtilisateur || newUser?.id;
+  if (uid) {
+    loadPostsAndAuthors().catch(err => console.error(err));
+    notificationStore.fetchNotificationsByUser(uid).catch(err => console.error(err));
   }
 });
 

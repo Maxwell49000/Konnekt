@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import PostService from '../services/PostService';
+import FeedService from '../services/FeedService';
 
 export const usePostStore = defineStore('post', () => {
     const posts = ref([]);
@@ -9,11 +10,38 @@ export const usePostStore = defineStore('post', () => {
 
     const postCount = computed(() => posts.value.length);
 
-    const fetchPosts = async () => {
+    // fetchPosts optionally accepts a userId to load the user's feed.
+    const fetchPosts = async (userId) => {
         isLoading.value = true;
         error.value = null;
         try {
-            posts.value = await PostService.getAllPosts();
+            if (userId) {
+                // Use aggregated endpoint to fetch posts for user's feed (avoid N+1)
+                const feedPosts = await FeedService.getPostsByUser(userId).catch(() => null);
+                if (Array.isArray(feedPosts) && feedPosts.length > 0) {
+                    // Sort by date descending (most recent first)
+                    posts.value = feedPosts.sort((a, b) => {
+                        const dateA = new Date(a.dateCreation || a.createdAt || 0).getTime();
+                        const dateB = new Date(b.dateCreation || b.createdAt || 0).getTime();
+                        return dateB - dateA;
+                    });
+                } else {
+                    // Fallback to all posts if feed empty or endpoint failed
+                    const allPosts = await PostService.getAllPosts();
+                    posts.value = allPosts.sort((a, b) => {
+                        const dateA = new Date(a.dateCreation || a.createdAt || 0).getTime();
+                        const dateB = new Date(b.dateCreation || b.createdAt || 0).getTime();
+                        return dateB - dateA;
+                    });
+                }
+            } else {
+                const allPosts = await PostService.getAllPosts();
+                posts.value = allPosts.sort((a, b) => {
+                    const dateA = new Date(a.dateCreation || a.createdAt || 0).getTime();
+                    const dateB = new Date(b.dateCreation || b.createdAt || 0).getTime();
+                    return dateB - dateA;
+                });
+            }
         } catch (err) {
             error.value = err.message || 'Erreur lors du chargement des posts';
         } finally {

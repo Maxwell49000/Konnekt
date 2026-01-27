@@ -16,6 +16,11 @@ const PostService = {
         return response.data;
     },
 
+    async getPostsByAuthor(userId) {
+        const response = await apiClient.get(`/posts/author/${userId}`);
+        return response.data;
+    },
+
     async updatePost(id, data) {
         const response = await apiClient.put(`/posts/${id}`, data);
         return response.data;
@@ -56,11 +61,6 @@ const PostService = {
 
     async getComments(postId) {
         const response = await apiClient.get(`/posts/${postId}/comments`);
-        return response.data;
-    },
-
-    async getPostsByAuthor(authorId) {
-        const response = await apiClient.get(`/posts/author/${authorId}`);
         return response.data;
     },
 };

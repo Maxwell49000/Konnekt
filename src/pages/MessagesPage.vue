@@ -53,9 +53,9 @@
 
           <q-scroll-area class="col q-pa-md">
             <div class="q-gutter-md">
-              <div v-for="msg in currentConversation?.messages || []" :key="`msg-${msg.id || msg.timestamp}`" :class="msg.auteurId === getUserId() ? 'row' : 'row reverse'">
+              <div v-for="msg in currentConversation?.messages || []" :key="`msg-${msg.id || msg._id || msg.timestamp}`" :class="(msg.auteurId || msg.senderId) === getUserId() ? 'row' : 'row reverse'">
                 <q-chat-message
-                  :name="msg.auteurName || (msg.auteurId === getUserId() ? 'Moi' : 'Utilisateur')"
+                  :name="msg.auteurName || (((msg.auteurId || msg.senderId) === getUserId()) ? 'Moi' : 'Utilisateur')"
                   :avatar="undefined"
                   :text="[msg.contenu || msg.text || '']"
                   :sent="msg.auteurId === getUserId()"
@@ -123,22 +123,26 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useAuthStore } from '../stores/authStore';
+import { useConversationStore } from '../stores/conversationStore';
 import ConversationService from '../services/ConversationService';
 import SeConnecteService from '../services/SeConnecteService';
 import UtilisateurService from '../services/UtilisateurService';
 
 const authStore = useAuthStore();
+const conversationStore = useConversationStore();
 
 const conversations = ref([]);
-const currentConversation = ref(null);
 const messageText = ref('');
 const showNewConversationDialog = ref(false);
 const connections = ref([]);
 const isSendingMessage = ref(false);
 const authorsCache = ref({});
 const isLoading = ref(true);
+
+// Utiliser currentConversation du store au lieu d'une variable locale
+const currentConversation = computed(() => conversationStore.currentConversation);
 
 const getOther = (seConnecte) => {
   const meId = authStore.user?.idUtilisateur || authStore.user?.id;
@@ -168,7 +172,13 @@ const openConversation = async (id) => {
     const conv = await ConversationService.getConversation(id);
     // Enrichir les messages avec les noms des auteurs
     await enrichConversationMessages(conv);
-    currentConversation.value = conv;
+    conversationStore.currentConversation = conv;
+    
+    // Rejoindre la conversation via WebSocket
+    const userId = getUserId();
+    if (userId && conversationStore.wsConnected) {
+      conversationStore.joinConversation(id, userId);
+    }
   } catch (err) {
     console.error('Erreur chargement conversation:', err);
   }
@@ -252,12 +262,19 @@ const sendMessage = async () => {
   const meId = getUserId();
   isSendingMessage.value = true;
   try {
-    const message = await ConversationService.sendMessage(currentConversation.value.id, {
-      contenu: messageText.value,
-      auteurId: meId,
-    });
-    currentConversation.value.messages.push(message);
-    messageText.value = '';
+    // Essayer WebSocket d'abord si connecté
+    if (conversationStore.wsConnected) {
+      conversationStore.sendMessage(messageText.value, meId, currentConversation.value.id);
+      messageText.value = '';
+    } else {
+      // Fallback HTTP
+      const message = await ConversationService.sendMessage(currentConversation.value.id, {
+        contenu: messageText.value,
+        auteurId: meId,
+      });
+      currentConversation.value.messages.push(message);
+      messageText.value = '';
+    }
   } catch (err) {
     console.error('Erreur envoi message:', err);
   } finally {
@@ -376,22 +393,31 @@ onMounted(async () => {
     // Récupérer l'ID utilisateur de manière robuste
     const meId = getUserId();
     console.log('[MessagesPage] Loading conversations for user:', meId);
+    console.log('[MessagesPage] authStore.user:', authStore.user);
     
     if (!meId) {
       console.error('[MessagesPage] Could not determine user ID');
       throw new Error('User ID not found');
     }
+
+    // Initialiser WebSocket
+    console.log('[MessagesPage] Initializing WebSocket...');
+    await conversationStore.initWebSocket();
     
     const convs = await ConversationService.getConversationsByParticipant(meId);
     console.log('[MessagesPage] Raw conversations from backend:', convs);
     
-    // Enrichir chaque conversation chargée
-    for (const conv of convs) {
-      console.log('[MessagesPage] Enriching conversation:', conv);
-      await enrichConversationMessages(conv);
+    if (!convs || convs.length === 0) {
+      console.warn('[MessagesPage] No conversations found for user', meId);
+    } else {
+      // Enrichir chaque conversation chargée
+      for (const conv of convs) {
+        console.log('[MessagesPage] Enriching conversation:', conv);
+        await enrichConversationMessages(conv);
+      }
     }
     
-    conversations.value = convs;
+    conversations.value = convs || [];
     console.log('[MessagesPage] Conversations loaded and enriched:', conversations.value);
     
     await loadConnections();
@@ -400,6 +426,11 @@ onMounted(async () => {
   } finally {
     isLoading.value = false;
   }
+});
+
+onUnmounted(() => {
+  // Déconnecter WebSocket quand on quitte la page
+  conversationStore.disconnectWebSocket();
 });
 </script>
 

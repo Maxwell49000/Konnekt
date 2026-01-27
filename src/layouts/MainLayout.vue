@@ -15,9 +15,18 @@
             placeholder="Rechercher..."
             style="width: 200px"
             class="q-px-md"
+            @keyup.enter="goToSearch"
           >
             <template #prepend>
               <q-icon name="search" />
+            </template>
+            <template #append>
+              <q-icon
+                name="close"
+                @click="searchQuery = ''"
+                class="cursor-pointer"
+                v-if="searchQuery"
+              />
             </template>
           </q-input>
 
@@ -51,10 +60,12 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/authStore';
 import { useNotificationStore } from '../stores/notificationStore';
+import { useSearchStore } from '../stores/searchStore';
 
 const router = useRouter();
 const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
+const searchStore = useSearchStore();
 
 const searchQuery = ref('');
 
@@ -63,6 +74,13 @@ const unreadCount = computed(() => notificationStore.unreadCount);
 
 const goTo = (path) => {
   router.push(path);
+};
+
+const goToSearch = () => {
+  if (searchQuery.value.trim()) {
+    searchStore.updateSearchQuery(searchQuery.value);
+    router.push('/search');
+  }
 };
 
 const goToProfile = () => {

@@ -63,9 +63,14 @@ const NotificationService = {
     },
 
     async markAllAsRead(utilisateurId) {
-        const notifs = await this.getNotificationsByUser(utilisateurId);
-        for (const notif of notifs) {
-            await this.markAsRead(notif.id);
+        try {
+            await apiClient.put(`/notifications/user/${utilisateurId}/mark-all-read`);
+            // Refresh notifications after marking all as read
+            const notifs = await this.getNotificationsByUser(utilisateurId);
+            return notifs;
+        } catch (err) {
+            console.error('Error marking all as read:', err);
+            throw err;
         }
     },
 };
