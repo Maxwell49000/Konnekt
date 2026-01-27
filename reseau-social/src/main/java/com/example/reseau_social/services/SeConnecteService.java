@@ -16,6 +16,7 @@ import com.example.reseau_social.repositories.UtilisateurRepository;
 
 import jakarta.transaction.Transactional;
 
+// Service class for managing SeConnecte (connections between users)
 @Service
 @Transactional
 public class SeConnecteService {

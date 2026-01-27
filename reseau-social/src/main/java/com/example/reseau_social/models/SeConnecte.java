@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
+// Model for connection requests between users
 @Entity
 @Table(name = "se_connecte", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"id_demandeur", "id_destinataire"})

@@ -7,6 +7,7 @@ import com.example.reseau_social.models.Post;
 
 import java.util.List;
 
+// Repository interface for Post model
 @Repository
 public interface PostRepository extends MongoRepository<Post, String> {
     List<Post> findByAuthorId(Integer authorId);

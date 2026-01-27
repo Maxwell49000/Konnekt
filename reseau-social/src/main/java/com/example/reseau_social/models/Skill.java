@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
+// Model for skills that users can have
 @Entity
 @Table(name = "skill")
 public class Skill {

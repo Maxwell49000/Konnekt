@@ -1,6 +1,5 @@
 package com.example.reseau_social.controllers;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.reseau_social.dtos.CreateExperienceDTO;
+import com.example.reseau_social.dtos.ExperienceDTO;
 import com.example.reseau_social.models.Experience;
 import com.example.reseau_social.services.ExperienceService;
 
 import jakarta.validation.Valid;
 
+// Controller class for managing experiences
 @RestController
 @RequestMapping("/api/experiences")
 @CrossOrigin(origins = "*")
@@ -33,13 +33,13 @@ public class ExperienceController {
 
     // CREATE
     @PostMapping("/utilisateur/{utilisateurId}")
-    public ResponseEntity<Experience> createExperience(@PathVariable Integer utilisateurId, @Valid @RequestBody CreateExperienceDTO dto) {
+    public ResponseEntity<ExperienceDTO> createExperience(@PathVariable Integer utilisateurId, @Valid @RequestBody ExperienceDTO dto) {
         try {
             Experience experience = new Experience(dto.getPoste(), dto.getEntreprise(), dto.getDateDebut());
             experience.setDateFin(dto.getDateFin());
             experience.setDescription(dto.getDescription());
             Experience created = experienceService.createExperience(utilisateurId, experience);
-            return ResponseEntity.status(HttpStatus.CREATED).body(created);
+            return ResponseEntity.status(HttpStatus.CREATED).body(toDTO(created));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -47,74 +47,82 @@ public class ExperienceController {
 
     // READ - Get all
     @GetMapping
-    public ResponseEntity<List<Experience>> getAllExperiences() {
-        List<Experience> experiences = experienceService.getAllExperiences();
-        return ResponseEntity.ok(experiences);
+    public ResponseEntity<java.util.List<ExperienceDTO>> getAllExperiences() {
+        java.util.List<Experience> experiences = experienceService.getAllExperiences();
+        java.util.List<ExperienceDTO> dtos = experiences.stream().map(this::toDTO).toList();
+        return ResponseEntity.ok(dtos);
     }
 
     // READ - Get by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Experience> getExperienceById(@PathVariable Integer id) {
+    public ResponseEntity<ExperienceDTO> getExperienceById(@PathVariable Integer id) {
         Optional<Experience> experience = experienceService.getExperienceById(id);
-        return experience.map(ResponseEntity::ok)
+        return experience.map(e -> ResponseEntity.ok(toDTO(e)))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     // READ - Get by utilisateur
     @GetMapping("/utilisateur/{utilisateurId}")
-    public ResponseEntity<List<Experience>> getExperiencesByUtilisateur(@PathVariable Integer utilisateurId) {
-        List<Experience> experiences = experienceService.getExperiencesByUtilisateur(utilisateurId);
-        return ResponseEntity.ok(experiences);
+    public ResponseEntity<java.util.List<ExperienceDTO>> getExperiencesByUtilisateur(@PathVariable Integer utilisateurId) {
+        java.util.List<Experience> experiences = experienceService.getExperiencesByUtilisateur(utilisateurId);
+        java.util.List<ExperienceDTO> dtos = experiences.stream().map(this::toDTO).toList();
+        return ResponseEntity.ok(dtos);
     }
 
     // READ - Get by utilisateur ordered by date
     @GetMapping("/utilisateur/{utilisateurId}/ordered")
-    public ResponseEntity<List<Experience>> getExperiencesByUtilisateurOrdered(@PathVariable Integer utilisateurId) {
-        List<Experience> experiences = experienceService.getExperiencesByUtilisateurOrderByDateDebut(utilisateurId);
-        return ResponseEntity.ok(experiences);
+    public ResponseEntity<java.util.List<ExperienceDTO>> getExperiencesByUtilisateurOrdered(@PathVariable Integer utilisateurId) {
+        java.util.List<Experience> experiences = experienceService.getExperiencesByUtilisateurOrderByDateDebut(utilisateurId);
+        java.util.List<ExperienceDTO> dtos = experiences.stream().map(this::toDTO).toList();
+        return ResponseEntity.ok(dtos);
     }
 
     // READ - Get current experiences
     @GetMapping("/utilisateur/{utilisateurId}/current")
-    public ResponseEntity<List<Experience>> getCurrentExperiencesByUtilisateur(@PathVariable Integer utilisateurId) {
-        List<Experience> experiences = experienceService.getCurrentExperiencesByUtilisateur(utilisateurId);
-        return ResponseEntity.ok(experiences);
+    public ResponseEntity<java.util.List<ExperienceDTO>> getCurrentExperiencesByUtilisateur(@PathVariable Integer utilisateurId) {
+        java.util.List<Experience> experiences = experienceService.getCurrentExperiencesByUtilisateur(utilisateurId);
+        java.util.List<ExperienceDTO> dtos = experiences.stream().map(this::toDTO).toList();
+        return ResponseEntity.ok(dtos);
     }
 
     // READ - Get active experiences
     @GetMapping("/utilisateur/{utilisateurId}/active")
-    public ResponseEntity<List<Experience>> getActiveExperiencesByUtilisateur(@PathVariable Integer utilisateurId) {
-        List<Experience> experiences = experienceService.getActiveExperiencesByUtilisateur(utilisateurId);
-        return ResponseEntity.ok(experiences);
+    public ResponseEntity<java.util.List<ExperienceDTO>> getActiveExperiencesByUtilisateur(@PathVariable Integer utilisateurId) {
+        java.util.List<Experience> experiences = experienceService.getActiveExperiencesByUtilisateur(utilisateurId);
+        java.util.List<ExperienceDTO> dtos = experiences.stream().map(this::toDTO).toList();
+        return ResponseEntity.ok(dtos);
     }
 
     // READ - Search by entreprise
     @GetMapping("/entreprise/{entreprise}")
-    public ResponseEntity<List<Experience>> findByEntreprise(@PathVariable String entreprise) {
-        List<Experience> experiences = experienceService.findByEntreprise(entreprise);
-        return ResponseEntity.ok(experiences);
+    public ResponseEntity<java.util.List<ExperienceDTO>> findByEntreprise(@PathVariable String entreprise) {
+        java.util.List<Experience> experiences = experienceService.findByEntreprise(entreprise);
+        java.util.List<ExperienceDTO> dtos = experiences.stream().map(this::toDTO).toList();
+        return ResponseEntity.ok(dtos);
     }
 
     // READ - Search by poste
     @GetMapping("/poste/{poste}")
-    public ResponseEntity<List<Experience>> findByPoste(@PathVariable String poste) {
-        List<Experience> experiences = experienceService.findByPoste(poste);
-        return ResponseEntity.ok(experiences);
+    public ResponseEntity<java.util.List<ExperienceDTO>> findByPoste(@PathVariable String poste) {
+        java.util.List<Experience> experiences = experienceService.findByPoste(poste);
+        java.util.List<ExperienceDTO> dtos = experiences.stream().map(this::toDTO).toList();
+        return ResponseEntity.ok(dtos);
     }
 
     // READ - Search
     @GetMapping("/search")
-    public ResponseEntity<List<Experience>> search(@RequestParam String query) {
-        List<Experience> experiences = experienceService.searchByEntrepriseOrPoste(query);
-        return ResponseEntity.ok(experiences);
+    public ResponseEntity<java.util.List<ExperienceDTO>> search(@RequestParam String query) {
+        java.util.List<Experience> experiences = experienceService.searchByEntrepriseOrPoste(query);
+        java.util.List<ExperienceDTO> dtos = experiences.stream().map(this::toDTO).toList();
+        return ResponseEntity.ok(dtos);
     }
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Experience> updateExperience(@PathVariable Integer id, @RequestBody Experience experienceDetails) {
+    public ResponseEntity<ExperienceDTO> updateExperience(@PathVariable Integer id, @RequestBody Experience experienceDetails) {
         try {
             Experience updated = experienceService.updateExperience(id, experienceDetails);
-            return ResponseEntity.ok(updated);
+            return ResponseEntity.ok(toDTO(updated));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -145,5 +153,18 @@ public class ExperienceController {
     public ResponseEntity<Long> countAllExperiences() {
         long count = experienceService.countAllExperiences();
         return ResponseEntity.ok(count);
+    }
+
+    // Mapper helper
+    private ExperienceDTO toDTO(Experience e) {
+        if (e == null) return null;
+        ExperienceDTO dto = new ExperienceDTO();
+        dto.setIdExperience(e.getIdExperience());
+        dto.setPoste(e.getPoste());
+        dto.setEntreprise(e.getEntreprise());
+        dto.setDateDebut(e.getDateDebut());
+        dto.setDateFin(e.getDateFin());
+        dto.setDescription(e.getDescription());
+        return dto;
     }
 }

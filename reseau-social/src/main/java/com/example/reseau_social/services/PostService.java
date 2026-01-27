@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.reseau_social.dtos.CommentDTO;
-import com.example.reseau_social.dtos.CreatePostDTO;
-import com.example.reseau_social.dtos.PostResponseDTO;
+import com.example.reseau_social.dtos.PostDTO;
 import com.example.reseau_social.models.Comment;
 import com.example.reseau_social.models.Notification;
 import com.example.reseau_social.models.Post;
@@ -20,6 +19,7 @@ import com.example.reseau_social.repositories.UtilisateurRepository;
 
 import jakarta.transaction.Transactional;
 
+// Service class for managing Post entities
 @Service
 @Transactional
 public class PostService {
@@ -51,10 +51,18 @@ public class PostService {
 
     public Post updatePost(String id, Post details) {
         return postRepository.findById(id).map(p -> {
-            p.setText(details.getText());
-            p.setMedia(details.getMedia());
-            p.setVisibility(details.getVisibility());
-            p.setLikes(details.getLikes());
+            if (details.getText() != null) {
+                p.setText(details.getText());
+            }
+            if (details.getMedia() != null) {
+                p.setMedia(details.getMedia());
+            }
+            if (details.getVisibility() != null) {
+                p.setVisibility(details.getVisibility());
+            }
+            if (details.getLikes() != null) {
+                p.setLikes(details.getLikes());
+            }
             return postRepository.save(p);
         }).orElseThrow(() -> new IllegalArgumentException("Post not found: " + id));
     }
@@ -147,7 +155,7 @@ public class PostService {
     }
 
     // Mappers
-    public Post createPostFromDTO(CreatePostDTO dto) {
+    public Post createPostFromDTO(PostDTO dto) {
         Post post = new Post();
         post.setText(dto.getContenu());
         post.setAuthorId(dto.getAuteurId());
@@ -157,22 +165,22 @@ public class PostService {
         return post;
     }
 
-    public PostResponseDTO postToResponseDTO(Post post) {
+    public PostDTO postToResponseDTO(Post post) {
         List<CommentDTO> commentDTOs = post.getComments().stream()
                 .map(c -> new CommentDTO(c.getId(), c.getText(), c.getUserId(), c.getCreatedAt()))
                 .collect(Collectors.toList());
         
-        return new PostResponseDTO(
-                post.getId(),
-                post.getText(),
-                post.getAuthorId(),
-                post.getLikes() != null ? post.getLikes() : new java.util.ArrayList<>(),
-                post.getCreatedAt(),
-                commentDTOs
-        );
+        PostDTO dto = new PostDTO();
+        dto.setId(post.getId());
+        dto.setContenu(post.getText());
+        dto.setAuteurId(post.getAuthorId());
+        dto.setLikes(post.getLikes() != null ? post.getLikes() : new java.util.ArrayList<>());
+        dto.setDateCreation(post.getCreatedAt());
+        dto.setComments(commentDTOs);
+        return dto;
     }
 
-    public List<PostResponseDTO> postsToResponseDTOList(List<Post> posts) {
+    public List<PostDTO> postsToResponseDTOList(List<Post> posts) {
         return posts.stream().map(this::postToResponseDTO).collect(Collectors.toList());
     }
 }

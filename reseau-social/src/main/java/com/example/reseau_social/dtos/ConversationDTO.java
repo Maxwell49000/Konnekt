@@ -3,17 +3,30 @@ package com.example.reseau_social.dtos;
 import java.time.Instant;
 import java.util.List;
 
-public class ConversationResponseDTO {
+import jakarta.validation.constraints.NotNull;
+
+public class ConversationDTO {
     private String id;
+
+    @NotNull(message = "L'ID de l'utilisateur 1 est requis")
     private Integer utilisateur1Id;
+
+    @NotNull(message = "L'ID de l'utilisateur 2 est requis")
     private Integer utilisateur2Id;
+
     private Instant dateCreation;
     private List<MessageDTO> messages;
 
-    public ConversationResponseDTO() {
+    // Constructors
+    public ConversationDTO() {
     }
 
-    public ConversationResponseDTO(String id, Integer utilisateur1Id, Integer utilisateur2Id, Instant dateCreation, List<MessageDTO> messages) {
+    public ConversationDTO(Integer utilisateur1Id, Integer utilisateur2Id) {
+        this.utilisateur1Id = utilisateur1Id;
+        this.utilisateur2Id = utilisateur2Id;
+    }
+
+    public ConversationDTO(String id, Integer utilisateur1Id, Integer utilisateur2Id, Instant dateCreation, List<MessageDTO> messages) {
         this.id = id;
         this.utilisateur1Id = utilisateur1Id;
         this.utilisateur2Id = utilisateur2Id;
@@ -21,6 +34,7 @@ public class ConversationResponseDTO {
         this.messages = messages;
     }
 
+    // Getters and Setters
     public String getId() {
         return id;
     }

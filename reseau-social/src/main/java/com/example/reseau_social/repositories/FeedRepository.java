@@ -7,6 +7,7 @@ import com.example.reseau_social.models.Feed;
 
 import java.util.List;
 
+//  Repository interface for Feed model
 @Repository
 public interface FeedRepository extends MongoRepository<Feed, String> {
     List<Feed> findByUserId(Integer userId);

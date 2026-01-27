@@ -14,8 +14,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+// Model for user professional experiences
 @Entity
-@Table(name = "experience")
+@Table(name = "experience") 
 public class Experience {
 
     @Id

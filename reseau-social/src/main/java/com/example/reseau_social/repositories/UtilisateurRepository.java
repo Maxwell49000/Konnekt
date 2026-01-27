@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.reseau_social.models.Utilisateur;
 
+// Repository interface for Utilisateur model
 @Repository
 public interface UtilisateurRepository extends JpaRepository<Utilisateur, Integer> {
     
@@ -28,6 +29,9 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Intege
     
     @Query("SELECT u FROM Utilisateur u JOIN u.skills s WHERE s.idSkill = :skillId")
     List<Utilisateur> findUtilisateursBySkill(@Param("skillId") Integer skillId);
+    
+    @Query("SELECT DISTINCT u FROM Utilisateur u LEFT JOIN FETCH u.skills WHERE u.idUtilisateur = :id")
+    Optional<Utilisateur> findByIdWithSkills(@Param("id") Integer id);
     
     @Query("SELECT u FROM Utilisateur u WHERE LOWER(u.nom) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(u.prenom) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     List<Utilisateur> searchByNomOrPrenom(@Param("searchTerm") String searchTerm);

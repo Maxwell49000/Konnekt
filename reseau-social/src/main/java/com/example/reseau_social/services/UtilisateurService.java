@@ -14,6 +14,7 @@ import com.example.reseau_social.repositories.UtilisateurRepository;
 
 import jakarta.transaction.Transactional;
 
+// Service class for managing Utilisateur entities
 @Service
 @Transactional
 public class UtilisateurService {
@@ -77,8 +78,12 @@ public class UtilisateurService {
     public Utilisateur updateUtilisateur(Integer id, Utilisateur utilisateurDetails) {
         return utilisateurRepository.findById(id)
                 .map(utilisateur -> {
-                    utilisateur.setNom(utilisateurDetails.getNom());
-                    utilisateur.setPrenom(utilisateurDetails.getPrenom());
+                    if (utilisateurDetails.getNom() != null) {
+                        utilisateur.setNom(utilisateurDetails.getNom());
+                    }
+                    if (utilisateurDetails.getPrenom() != null) {
+                        utilisateur.setPrenom(utilisateurDetails.getPrenom());
+                    }
                     // Update email if provided and different
                     String newEmail = utilisateurDetails.getEmail();
                     if (newEmail != null && !newEmail.equals(utilisateur.getEmail())) {
@@ -87,9 +92,15 @@ public class UtilisateurService {
                         }
                         utilisateur.setEmail(newEmail);
                     }
-                    utilisateur.setTitreProfessionnel(utilisateurDetails.getTitreProfessionnel());
-                    utilisateur.setResume(utilisateurDetails.getResume());
-                    utilisateur.setVisibiliteProfil(utilisateurDetails.getVisibiliteProfil());
+                    if (utilisateurDetails.getTitreProfessionnel() != null) {
+                        utilisateur.setTitreProfessionnel(utilisateurDetails.getTitreProfessionnel());
+                    }
+                    if (utilisateurDetails.getResume() != null) {
+                        utilisateur.setResume(utilisateurDetails.getResume());
+                    }
+                    if (utilisateurDetails.getVisibiliteProfil() != null) {
+                        utilisateur.setVisibiliteProfil(utilisateurDetails.getVisibiliteProfil());
+                    }
                     return utilisateurRepository.save(utilisateur);
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé avec l'ID: " + id));

@@ -11,6 +11,7 @@ import com.example.reseau_social.repositories.FeedRepository;
 
 import jakarta.transaction.Transactional;
 
+// Service class for managing Feed entities
 @Service
 @Transactional
 public class FeedService {

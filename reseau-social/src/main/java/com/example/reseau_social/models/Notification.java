@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// Model for notifications
 @Document(collection = "notifications")
 @Data
 @NoArgsConstructor

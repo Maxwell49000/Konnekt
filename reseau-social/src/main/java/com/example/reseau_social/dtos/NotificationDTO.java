@@ -2,18 +2,35 @@ package com.example.reseau_social.dtos;
 
 import java.time.Instant;
 
-public class NotificationResponseDTO {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public class NotificationDTO {
     private String id;
+
+    @NotNull(message = "L'ID de l'utilisateur destinataire est requis")
     private Integer utilisateurId;
+
+    @NotBlank(message = "Le type de notification ne peut pas être vide")
     private String type;
+
+    @NotBlank(message = "Le message de notification ne peut pas être vide")
     private String message;
+
     private Boolean lue;
     private Instant dateCreation;
 
-    public NotificationResponseDTO() {
+    // Constructors
+    public NotificationDTO() {
     }
 
-    public NotificationResponseDTO(String id, Integer utilisateurId, String type, String message, Boolean lue, Instant dateCreation) {
+    public NotificationDTO(Integer utilisateurId, String type, String message) {
+        this.utilisateurId = utilisateurId;
+        this.type = type;
+        this.message = message;
+    }
+
+    public NotificationDTO(String id, Integer utilisateurId, String type, String message, Boolean lue, Instant dateCreation) {
         this.id = id;
         this.utilisateurId = utilisateurId;
         this.type = type;
@@ -22,6 +39,7 @@ public class NotificationResponseDTO {
         this.dateCreation = dateCreation;
     }
 
+    // Getters and Setters
     public String getId() {
         return id;
     }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.reseau_social.models.Skill;
 
+// Repository interface for Skill model
 @Repository
 public interface SkillRepository extends JpaRepository<Skill, Integer> {
     

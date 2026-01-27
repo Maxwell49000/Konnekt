@@ -9,9 +9,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+// Model for comments on posts
+@Data 
+@NoArgsConstructor  
+@AllArgsConstructor 
 public class Comment {
     private String id = UUID.randomUUID().toString();
     @Field("user_id")

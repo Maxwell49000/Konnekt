@@ -17,6 +17,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+// Model for users in the social network
 @Entity
 @Table(name = "utilisateur")
 public class Utilisateur {
@@ -43,9 +44,11 @@ public class Utilisateur {
     @Column(name = "visibilite_profil", nullable = false)
     private Boolean visibiliteProfil = true;
 
+    // Experiences associated with the user
     @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Experience> experiences = new HashSet<>();
 
+    // Skills associated with the user
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "possede",
@@ -54,10 +57,12 @@ public class Utilisateur {
     )
     private Set<Skill> skills = new HashSet<>();
 
+    // Connection requests sent and received
     @OneToMany(mappedBy = "demandeur", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<SeConnecte> demandesEnvoyees = new HashSet<>();
 
+    // Connection requests received
     @OneToMany(mappedBy = "destinataire", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<SeConnecte> demandesRecues = new HashSet<>();

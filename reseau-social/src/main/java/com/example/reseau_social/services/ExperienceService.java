@@ -13,6 +13,7 @@ import com.example.reseau_social.repositories.UtilisateurRepository;
 
 import jakarta.transaction.Transactional;
 
+// Service class for managing Experience entities
 @Service
 @Transactional
 public class ExperienceService {

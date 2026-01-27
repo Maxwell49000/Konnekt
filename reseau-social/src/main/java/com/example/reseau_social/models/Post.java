@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// Model for posts
 @Document(collection = "posts")
 @Data
 @NoArgsConstructor

@@ -21,6 +21,7 @@ import com.example.reseau_social.models.SeConnecte;
 import com.example.reseau_social.models.SeConnecte.StatutConnexion;
 import com.example.reseau_social.services.SeConnecteService;
 
+// Controller class for managing connections between users
 @RestController
 @RequestMapping("/api/connexions")
 @CrossOrigin(origins = "*")

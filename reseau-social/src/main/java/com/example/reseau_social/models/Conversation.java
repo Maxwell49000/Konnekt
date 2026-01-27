@@ -12,10 +12,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Document(collection = "conversations")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+// Model for conversations between users
+@Document(collection = "conversations") // MongoDB collection name
+@Data 
+@NoArgsConstructor 
+@AllArgsConstructor 
 public class Conversation {
     @Id
     private String id;

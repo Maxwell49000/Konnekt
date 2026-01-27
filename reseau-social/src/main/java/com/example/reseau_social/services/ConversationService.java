@@ -9,8 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.reseau_social.dtos.ConversationResponseDTO;
-import com.example.reseau_social.dtos.CreateConversationDTO;
+import com.example.reseau_social.dtos.ConversationDTO;
 import com.example.reseau_social.dtos.MessageDTO;
 import com.example.reseau_social.models.Conversation;
 import com.example.reseau_social.models.Message;
@@ -21,6 +20,7 @@ import com.example.reseau_social.repositories.UtilisateurRepository;
 
 import jakarta.transaction.Transactional;
 
+// Service class for managing conversations
 @Service
 @Transactional
 public class ConversationService {
@@ -92,7 +92,7 @@ public class ConversationService {
     }
 
     // Mappers
-    public Conversation createConversationFromDTO(CreateConversationDTO dto) {
+    public Conversation createConversationFromDTO(ConversationDTO dto) {
         Conversation conversation = new Conversation();
         conversation.setParticipants(Arrays.asList(dto.getUtilisateur1Id(), dto.getUtilisateur2Id()));
         conversation.setCreatedAt(Instant.now());
@@ -100,21 +100,21 @@ public class ConversationService {
         return conversation;
     }
 
-    public ConversationResponseDTO conversationToResponseDTO(Conversation conversation) {
+    public ConversationDTO conversationToResponseDTO(Conversation conversation) {
         List<MessageDTO> messageDTOs = conversation.getMessages().stream()
-                .map(m -> new MessageDTO(m.getId(), m.getText(), m.getSenderId(), m.getCreatedAt()))
+                .map(m -> new MessageDTO(m.getId(), m.getText(), m.getSenderId(), conversation.getId(), m.getCreatedAt()))
                 .collect(Collectors.toList());
         
-        return new ConversationResponseDTO(
-                conversation.getId(),
-                conversation.getParticipants().get(0),
-                conversation.getParticipants().get(1),
-                conversation.getCreatedAt(),
-                messageDTOs
-        );
+        ConversationDTO dto = new ConversationDTO();
+        dto.setId(conversation.getId());
+        dto.setUtilisateur1Id(conversation.getParticipants().get(0));
+        dto.setUtilisateur2Id(conversation.getParticipants().get(1));
+        dto.setDateCreation(conversation.getCreatedAt());
+        dto.setMessages(messageDTOs);
+        return dto;
     }
 
-    public List<ConversationResponseDTO> conversationsToResponseDTOList(List<Conversation> conversations) {
+    public List<ConversationDTO> conversationsToResponseDTOList(List<Conversation> conversations) {
         return conversations.stream().map(this::conversationToResponseDTO).collect(Collectors.toList());
     }
 }

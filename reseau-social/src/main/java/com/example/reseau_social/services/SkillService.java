@@ -11,6 +11,7 @@ import com.example.reseau_social.repositories.SkillRepository;
 
 import jakarta.transaction.Transactional;
 
+// Service class for managing Skill entities
 @Service
 @Transactional
 public class SkillService {
@@ -55,7 +56,9 @@ public class SkillService {
     public Skill updateSkill(Integer id, Skill skillDetails) {
         return skillRepository.findById(id)
                 .map(skill -> {
-                    skill.setLibelle(skillDetails.getLibelle());
+                    if (skillDetails.getLibelle() != null) {
+                        skill.setLibelle(skillDetails.getLibelle());
+                    }
                     return skillRepository.save(skill);
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Skill non trouvé avec l'ID: " + id));

@@ -5,7 +5,9 @@ import java.time.LocalDate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public class CreateExperienceDTO {
+public class ExperienceDTO {
+    private Integer idExperience;
+
     @NotBlank(message = "Le poste est requis")
     private String poste;
 
@@ -16,20 +18,45 @@ public class CreateExperienceDTO {
     private LocalDate dateDebut;
 
     private LocalDate dateFin;
-
     private String description;
 
     // Constructors
-    public CreateExperienceDTO() {
+    public ExperienceDTO() {
     }
 
-    public CreateExperienceDTO(String poste, String entreprise, LocalDate dateDebut) {
+    public ExperienceDTO(String poste, String entreprise, LocalDate dateDebut) {
         this.poste = poste;
         this.entreprise = entreprise;
         this.dateDebut = dateDebut;
     }
 
+    public ExperienceDTO(Integer idExperience, String poste, String entreprise, LocalDate dateDebut, LocalDate dateFin, String description) {
+        this.idExperience = idExperience;
+        this.poste = poste;
+        this.entreprise = entreprise;
+        this.dateDebut = dateDebut;
+        this.dateFin = dateFin;
+        this.description = description;
+    }
+
     // Getters and Setters
+    public Integer getIdExperience() {
+        return idExperience;
+    }
+
+    public void setIdExperience(Integer idExperience) {
+        this.idExperience = idExperience;
+    }
+
+    // Alias getter/setter for JSON compatibility with `id`
+    public Integer getId() {
+        return this.idExperience;
+    }
+
+    public void setId(Integer id) {
+        this.idExperience = id;
+    }
+
     public String getPoste() {
         return poste;
     }

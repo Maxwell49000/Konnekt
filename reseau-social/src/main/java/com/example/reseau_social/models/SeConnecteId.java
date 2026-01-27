@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import jakarta.persistence.Embeddable;
 
+// Composite key class for SeConnecte entity
 @Embeddable
 public class SeConnecteId implements Serializable {
     private Integer idDemandeur;

@@ -14,6 +14,7 @@ import com.example.reseau_social.models.SeConnecte.StatutConnexion;
 
 import jakarta.transaction.Transactional;
 
+// Repository interface for SeConnecte model
 @Repository
 public interface SeConnecteRepository extends JpaRepository<SeConnecte, Integer> {
     

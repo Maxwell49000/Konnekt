@@ -12,6 +12,7 @@ import com.example.reseau_social.models.Experience;
 
 import jakarta.transaction.Transactional;
 
+// Repository interface for Experience model
 @Repository
 public interface ExperienceRepository extends JpaRepository<Experience, Integer> {
     

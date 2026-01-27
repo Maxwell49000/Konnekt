@@ -7,6 +7,7 @@ import com.example.reseau_social.models.Notification;
 
 import java.util.List;
 
+// Repository interface for Notification model
 @Repository
 public interface NotificationRepository extends MongoRepository<Notification, String> {
     List<Notification> findByUserId(Integer userId);

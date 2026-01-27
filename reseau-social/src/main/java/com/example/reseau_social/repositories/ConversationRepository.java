@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import com.example.reseau_social.models.Conversation;
 
+// Repository interface for Conversation model
 @Repository
 public interface ConversationRepository extends MongoRepository<Conversation, String> {
     List<Conversation> findByParticipantsContaining(Integer participantId);
 }
+
