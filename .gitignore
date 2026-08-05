@@ -1,0 +1,13 @@
+# Legacy build directory left by the monorepo migration
+/reseau-social/
+
+# Local configuration
+.env
+.env.*
+!.env.example
+
+# Editors and operating systems
+.idea/
+.DS_Store
+Thumbs.db
+
