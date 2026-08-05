@@ -14,6 +14,9 @@ public class MongoConfig {
     @Value("${spring.data.mongodb.uri:mongodb://localhost:27017/reseau_social}")
     private String mongoUri;
 
+    @Value("${spring.data.mongodb.database:konnekt}")
+    private String databaseName;
+
     @Bean
     public MongoClient mongoClient() {
         return MongoClients.create(mongoUri);
@@ -21,6 +24,6 @@ public class MongoConfig {
 
     @Bean
     public MongoTemplate mongoTemplate(MongoClient mongoClient) {
-        return new MongoTemplate(mongoClient, "reseau_social");
+        return new MongoTemplate(mongoClient, databaseName);
     }
 }

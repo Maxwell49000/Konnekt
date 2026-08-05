@@ -85,7 +85,7 @@ const load = async () => {
   try {
     let meId = authStore.user?.idUtilisateur || authStore.user?.id;
     if (!meId && authStore.token) {
-      const m = String(authStore.token).match(/^token_(\d+)$/);
+      const m = String(authStore.token).match(/^(?:demo|token)_(\d+)$/);
       if (m) meId = m[1];
     }
       if (!meId) {

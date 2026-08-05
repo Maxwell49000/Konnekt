@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot — Konnekt API",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/apps/api",
+            "mainClass": "com.example.reseau_social.ReseauSocialApplication",
+            "projectName": "konnekt-api",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

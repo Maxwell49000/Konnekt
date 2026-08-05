@@ -1,8 +1,8 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="row q-col-gutter-md">
+  <q-page class="dashboard-page">
+    <div class="row q-col-gutter-lg">
       <!-- Sidebar -->
-      <div class="col-12 col-md-3">
+      <div class="profile-summary col-12 col-md-3">
         <q-card class="q-pa-md">
           <div class="text-center q-mb-md">
             <q-avatar size="80px" color="primary" text-color="white">
@@ -59,7 +59,7 @@
       </div>
 
       <!-- Main Feed -->
-      <div class="col-12 col-md-6">
+      <div class="feed-column col-12 col-md-8">
         <!-- Create Post -->
         <q-card class="q-pa-md q-mb-md">
           <div class="row items-center q-gutter-md">
@@ -206,7 +206,7 @@
       </div>
 
       <!-- Right Sidebar - Suggestions -->
-      <div class="col-12 col-md-3">
+      <div class="suggestions-column col-12 col-md-4">
         <q-card class="q-pa-md">
           <h6 class="q-ma-none q-mb-md">Suggestions</h6>
           <q-list bordered separator>

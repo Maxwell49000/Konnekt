@@ -1,8 +1,8 @@
 {
-  "name": "linkdong",
-  "version": "0.0.1",
-  "description": "social media",
-  "productName": "linkdong",
+  "name": "konnekt-web",
+  "version": "1.0.0",
+  "description": "Professional networking web application",
+  "productName": "Konnekt",
   "author": "Maxwell <axel.paillard.12@gmail.com>",
   "type": "module",
   "private": true,
@@ -35,7 +35,7 @@
     "postcss": "^8.4.14"
   },
   "engines": {
-    "node": "^28 || ^26 || ^24 || ^22 || ^20 || ^18",
+    "node": ">=22.22.0",
     "npm": ">= 6.13.4",
     "yarn": ">= 1.21.1"
   }

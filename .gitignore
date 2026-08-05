@@ -1,5 +1,20 @@
-# Legacy build directory left by the monorepo migration
+# Previous local checkouts kept during the monorepo migration
+/Backend/
+/Frontend/
+/frontend-history.bundle
 /reseau-social/
+/.github/modernize/
+
+# Build outputs and dependencies
+**/target/
+**/node_modules/
+**/.quasar/
+**/dist/
+**/.npm-cache/
+
+# Test and coverage reports
+**/coverage/
+**/jacoco.exec
 
 # Local configuration
 .env
@@ -10,4 +25,3 @@
 .idea/
 .DS_Store
 Thumbs.db
-

@@ -1,79 +1,23 @@
 <template>
-  <q-page class="row items-center justify-center">
-    <div class="col-12 col-md-5">
-      <div class="text-center q-mb-lg">
-        <h1 class="text-h3 q-ma-none">Créer un compte</h1>
-        <p class="text-grey">Rejoignez LinkDong</p>
-      </div>
-
-      <q-card class="q-pa-lg">
-        <q-form @submit="onSubmit" class="q-gutter-md">
-          <div class="row q-col-gutter-md">
-            <div class="col-6">
-              <q-input
-                v-model="formData.prenom"
-                label="Prénom"
-                outlined
-                :rules="[(val) => !!val || 'Prénom requis']"
-              />
-            </div>
-            <div class="col-6">
-              <q-input
-                v-model="formData.nom"
-                label="Nom"
-                outlined
-                :rules="[(val) => !!val || 'Nom requis']"
-              />
-            </div>
-          </div>
-
-          <q-input
-            v-model="formData.email"
-            label="Email"
-            type="email"
-            outlined
-            :rules="[(val) => !!val || 'Email requis', (val) => validateEmail(val) || 'Email invalide']"
-          />
-
-          <q-input
-            v-model="formData.motDePasse"
-            label="Mot de passe"
-            type="password"
-            outlined
-            :rules="[(val) => !!val || 'Mot de passe requis', (val) => val.length >= 6 || 'Au minimum 6 caractères']"
-          />
-
-          <q-input
-            v-model="formData.confirmPassword"
-            label="Confirmer le mot de passe"
-            type="password"
-            outlined
-            :rules="[(val) => val === formData.motDePasse || 'Les mots de passe ne correspondent pas']"
-          />
-
-          <div class="text-center">
-            <q-btn
-              label="S'inscrire"
-              type="submit"
-              color="primary"
-              size="lg"
-              unelevated
-              class="full-width"
-              :loading="isLoading"
-            />
-          </div>
-
-          <div class="text-center q-mt-md">
-            <p class="q-mb-none">
-              Déjà inscrit?
-              <router-link to="/login" class="text-primary">Se connecter</router-link>
-            </p>
-          </div>
+  <q-page class="auth-page auth-page--register">
+    <section class="auth-story">
+      <router-link to="/login" class="brand brand--light"><span class="brand__mark brand__mark--light" aria-hidden="true">K</span><span>Konnekt</span></router-link>
+      <div class="auth-story__content"><span class="eyebrow eyebrow--light">Votre espace professionnel</span><h1>Un profil clair. Des échanges qui comptent.</h1><p>Présentez votre parcours et retrouvez une communauté centrée sur les projets et les compétences.</p></div>
+      <div class="auth-story__proof"><q-icon name="verified" /><span>Profil visible uniquement selon vos préférences.</span></div>
+    </section>
+    <section class="auth-form-panel">
+      <div class="auth-form-wrap">
+        <span class="eyebrow">Nouveau profil</span><h2>Rejoindre Konnekt</h2><p class="auth-intro">Quelques informations suffisent pour commencer la démonstration.</p>
+        <q-form class="auth-form" @submit.prevent="onSubmit">
+          <div class="row q-col-gutter-md"><q-input v-model="formData.prenom" class="col-12 col-sm-6" label="Prénom" outlined :rules="[(val) => !!val || 'Prénom requis']" /><q-input v-model="formData.nom" class="col-12 col-sm-6" label="Nom" outlined :rules="[(val) => !!val || 'Nom requis']" /></div>
+          <q-input v-model="formData.email" label="Adresse e-mail" type="email" outlined :rules="[(val) => !!val || 'Adresse e-mail requise', (val) => validateEmail(val) || 'Adresse e-mail invalide']" />
+          <q-input v-model="formData.titreProfessionnel" label="Intitulé professionnel" outlined hint="Ex. Développeuse frontend" />
+          <q-btn label="Créer mon profil" type="submit" color="primary" unelevated no-caps size="lg" class="full-width auth-submit" :loading="isLoading" />
+          <p class="auth-switch">Déjà un profil ? <router-link to="/login">Accéder à la démo</router-link></p>
         </q-form>
-
-        <p v-if="error" class="text-negative text-center q-mt-md">{{ error }}</p>
-      </q-card>
-    </div>
+        <q-banner v-if="error" rounded class="error-banner">{{ error }}</q-banner>
+      </div>
+    </section>
   </q-page>
 </template>
 
@@ -82,48 +26,21 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/authStore';
 import UtilisateurService from '../services/UtilisateurService';
-
 const router = useRouter();
 const authStore = useAuthStore();
-
-const formData = ref({
-  prenom: '',
-  nom: '',
-  email: '',
-  motDePasse: '',
-  confirmPassword: '',
-});
-
+const formData = ref({ prenom: '', nom: '', email: '', titreProfessionnel: '' });
 const isLoading = ref(false);
 const error = ref(null);
-
-const validateEmail = (email) => {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
-};
-
+const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const onSubmit = async () => {
   isLoading.value = true;
   error.value = null;
-
   try {
-    const newUser = await UtilisateurService.createUtilisateur({
-      nom: formData.value.nom,
-      prenom: formData.value.prenom,
-      email: formData.value.email,
-      motDePasse: formData.value.motDePasse,
-    });
-
-    authStore.setUser(newUser);
-    const newId = newUser.idUtilisateur || newUser.id;
-    authStore.setToken(`token_${newId}`);
-
-    router.push('/');
+    const newUser = await UtilisateurService.createUtilisateur({ ...formData.value, visibiliteProfil: true });
+    authStore.startDemoSession(newUser);
+    await router.push('/dashboard');
   } catch (err) {
-    const errorMsg = err.message || 'Erreur lors de l\'inscription';
-    error.value = errorMsg;
-  } finally {
-    isLoading.value = false;
-  }
+    error.value = err.response?.data?.message || err.message || 'Impossible de créer ce profil.';
+  } finally { isLoading.value = false; }
 };
 </script>

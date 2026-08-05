@@ -19,6 +19,12 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.setItem('authToken', newToken);
     };
 
+    const startDemoSession = (userData) => {
+        const userId = userData?.idUtilisateur || userData?.id;
+        setUser(userData);
+        setToken(`demo_${userId}`);
+    };
+
     const logout = () => {
         user.value = null;
         token.value = null;
@@ -40,7 +46,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     // If a token exists from previous session, try to recover the user.
     if (token.value) {
-        const m = String(token.value).match(/^token_(\d+)$/);
+        const m = String(token.value).match(/^(?:demo|token)_(\d+)$/);
         if (m) {
             // don't await — fire and forget to populate user
             fetchUser(m[1]).catch(() => { });
@@ -55,6 +61,7 @@ export const useAuthStore = defineStore('auth', () => {
         isAuthenticated,
         setUser,
         setToken,
+        startDemoSession,
         logout,
         fetchUser,
     };

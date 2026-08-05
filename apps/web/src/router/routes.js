@@ -2,6 +2,7 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresSession: true },
     children: [
       { path: '', redirect: '/dashboard' },
       { path: 'posts', component: () => import('pages/PostsPage.vue') },
@@ -32,6 +33,7 @@ const routes = [
   {
     path: '/dashboard',
     component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresSession: true },
     children: [
       { path: '', component: () => import('pages/DashboardPage.vue') }
     ]

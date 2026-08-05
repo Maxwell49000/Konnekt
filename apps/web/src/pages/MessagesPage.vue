@@ -158,9 +158,9 @@ const getUserId = () => {
   if (id) return id;
   
   // Sinon, extraire du token
-  const token = authStore.token || localStorage.getItem('token');
+  const token = authStore.token || localStorage.getItem('authToken');
   if (token) {
-    const match = String(token).match(/^token_(\d+)$/);
+    const match = String(token).match(/^(?:demo|token)_(\d+)$/);
     if (match) return parseInt(match[1]);
   }
   

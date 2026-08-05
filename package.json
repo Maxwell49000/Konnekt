@@ -1,0 +1,17 @@
+{
+  "name": "konnekt-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A full-stack professional networking platform built with Vue and Spring Boot.",
+  "scripts": {
+    "dev:web": "npm --prefix apps/web run dev",
+    "build:web": "npm --prefix apps/web run build",
+    "lint:web": "npm --prefix apps/web run lint",
+    "test:api": "cd apps/api && mvnw.cmd test",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down"
+  },
+  "engines": {
+    "node": ">=22.22.0"
+  }
+}

@@ -26,5 +26,12 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE)
   })
 
+  Router.beforeEach((to) => {
+    const hasDemoSession = Boolean(localStorage.getItem('authToken'))
+    if (to.meta.requiresSession && !hasDemoSession) return '/login'
+    if (hasDemoSession && ['/login', '/register'].includes(to.path)) return '/dashboard'
+    return true
+  })
+
   return Router
 })
