@@ -35,7 +35,7 @@ public class UtilisateurService {
 
     // READ
     public Optional<Utilisateur> getUtilisateurById(Integer id) {
-        return utilisateurRepository.findById(id);
+        return utilisateurRepository.findByIdWithSkills(id);
     }
 
     public Optional<Utilisateur> getUtilisateurByEmail(String email) {
