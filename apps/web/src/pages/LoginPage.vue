@@ -1,7 +1,7 @@
 <template>
   <q-page class="auth-page">
     <section class="auth-story">
-      <router-link to="/login" class="brand brand--light"><span class="brand__mark brand__mark--light" aria-hidden="true">K</span><span>Konnekt</span></router-link>
+      <router-link to="/login" class="brand brand--light"><span class="brand__word">konnekt</span></router-link>
       <div class="auth-story__content">
         <span class="eyebrow eyebrow--light">Réseau professionnel</span>
         <h1>Les bonnes rencontres font avancer les idées.</h1>

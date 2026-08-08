@@ -14,9 +14,8 @@ a { color: inherit; }
 .q-field--outlined .q-field__control { border-radius: 12px; }
 .q-btn { letter-spacing: 0; }
 
-.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-size: 21px; font-weight: 750; letter-spacing: -0.03em; text-decoration: none; }
-.brand__mark { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 10px; color: white; background: #1f4d3d; font-size: 18px; font-weight: 800; }
-.brand__mark--light { color: #1f4d3d; background: #f1e8d5; }
+.brand { display: inline-flex; align-items: center; color: var(--ink); text-decoration: none; }
+.brand__word { font-family: Georgia, "Times New Roman", serif; font-size: 27px; font-weight: 600; line-height: 1; letter-spacing: -0.065em; }
 .brand--light { color: white; }
 .eyebrow, .nav-eyebrow { color: #1f4d3d; font-size: 12px; font-weight: 750; letter-spacing: 0.12em; text-transform: uppercase; }
 .eyebrow--light { color: #c8d9d1; }

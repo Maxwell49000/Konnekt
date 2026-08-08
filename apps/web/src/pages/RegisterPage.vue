@@ -1,7 +1,7 @@
 <template>
   <q-page class="auth-page auth-page--register">
     <section class="auth-story">
-      <router-link to="/login" class="brand brand--light"><span class="brand__mark brand__mark--light" aria-hidden="true">K</span><span>Konnekt</span></router-link>
+      <router-link to="/login" class="brand brand--light"><span class="brand__word">konnekt</span></router-link>
       <div class="auth-story__content"><span class="eyebrow eyebrow--light">Votre espace professionnel</span><h1>Un profil clair. Des échanges qui comptent.</h1><p>Présentez votre parcours et retrouvez une communauté centrée sur les projets et les compétences.</p></div>
       <div class="auth-story__proof"><q-icon name="verified" /><span>Profil visible uniquement selon vos préférences.</span></div>
     </section>

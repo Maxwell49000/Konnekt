@@ -1,40 +1,27 @@
 <template>
-  <q-page class="profile-page bg-grey-1 q-pa-md">
-    <!-- Header du profil -->
-    <q-card class="profile-header relative-position q-mb-xl" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 200px">
-      <div class="absolute full-width q-pa-lg" style="height: 150px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-      </div>
-      
-      <div class="relative-position q-pa-lg">
-        <div class="row items-end justify-between">
-          <div class="row items-end q-gutter-lg">
-            <!-- Avatar professionnel -->
-            <q-avatar 
-              size="120px" 
-              color="white" 
-              text-color="primary"
-              font-size="48px"
-              class="shadow-2"
-            >
-              {{ user?.prenom?.charAt(0) ?? 'U' }}
-            </q-avatar>
-            
-            <div class="text-white">
-              <h3 class="q-ma-none">{{ user?.prenom }} {{ user?.nom }}</h3>
-              <p class="q-ma-sm text-caption text-white-70">{{ user?.titreProfessionnel || 'Titre professionnel' }}</p>
-            </div>
+  <q-page class="profile-page">
+    <div class="profile-shell">
+      <header class="profile-header q-mb-lg">
+        <div class="profile-header__topline">
+          <span>Profil professionnel</span>
+          <span>N° {{ String(route.params.id || '').padStart(3, '0') }}</span>
+        </div>
+        <div class="profile-header__main">
+          <div class="profile-monogram" aria-hidden="true">
+            {{ user?.prenom?.charAt(0) || 'U' }}{{ user?.nom?.charAt(0) || '' }}
           </div>
-          
-          <!-- Boutons d'actions -->
-          <div class="q-gutter-sm">
+          <div class="profile-identity">
+            <h1>{{ user?.prenom }} {{ user?.nom }}</h1>
+            <p>{{ user?.titreProfessionnel || 'Titre professionnel' }}</p>
+          </div>
+          <div class="profile-actions q-gutter-sm">
             <q-btn 
               v-if="isOwner && !isEditing" 
               label="Modifier le profil" 
-              color="white"
-              text-color="primary"
-              icon="edit"
+              color="primary"
               @click="startEdit"
               unelevated
+              no-caps
               size="md"
             />
             <q-btn 
@@ -74,11 +61,14 @@
             />
           </div>
         </div>
-      </div>
-    </q-card>
+        <div class="profile-header__meta">
+          <span>{{ user?.email }}</span>
+          <span class="profile-status"><i></i>{{ user?.visibiliteProfil ? 'Profil public' : 'Profil privé' }}</span>
+        </div>
+      </header>
 
     <!-- Contenu du profil -->
-    <div class="row q-col-gutter-lg">
+    <div class="row q-col-gutter-lg profile-content">
       <!-- Colonne principale -->
       <div class="col-12 col-md-8">
         <!-- Section About -->
@@ -289,23 +279,16 @@
 
       <!-- Colonne latérale -->
       <div class="col-12 col-md-4">
-        <!-- Infos de contact -->
+        <!-- Aperçu du profil -->
         <q-card class="q-mb-lg">
           <q-card-section>
             <div class="text-h6 q-mb-md">
-              <q-icon name="mail" color="primary" class="q-mr-sm" />
-              Contact
+              Aperçu
             </div>
-            <div v-if="!isEditing">
-              <p class="q-my-sm text-body2">
-                <strong>Email:</strong><br/>
-                {{ user?.email }}
-              </p>
-              <p class="q-my-sm text-body2">
-                <strong>Visibilité du profil:</strong><br/>
-                <q-icon name="visibility" size="sm" class="q-mr-xs" />
-                {{ user?.visibiliteProfil ? 'Public' : 'Privé' }}
-              </p>
+            <div v-if="!isEditing" class="profile-facts">
+              <div><strong>{{ experiences.length }}</strong><span>Expérience{{ experiences.length > 1 ? 's' : '' }}</span></div>
+              <div><strong>{{ userPosts.length }}</strong><span>Publication{{ userPosts.length > 1 ? 's' : '' }}</span></div>
+              <div><strong>{{ user?.visibiliteProfil ? 'Public' : 'Privé' }}</strong><span>Visibilité</span></div>
             </div>
             <div v-else>
               <q-input v-model="editModel.email" label="Email" outlined dense />
@@ -337,6 +320,7 @@
           </q-card-section>
         </q-card>
       </div>
+    </div>
     </div>
     <!-- Experience add/edit dialog -->
     <q-dialog v-model="experienceDialog">
@@ -686,21 +670,180 @@ const sendConnectionRequest = async () => {
 
 <style scoped>
 .profile-page {
-  background-color: #f5f7fa;
+  min-height: 100%;
+  background: #f4f4f0;
+}
+
+.profile-shell {
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  padding: 38px 28px 72px;
 }
 
 .profile-header {
-  border-radius: 8px;
-  overflow: hidden;
+  padding: 0 4px 28px;
+  border-top: 1px solid #aeb8b1;
+  border-bottom: 1px solid #cfd5d0;
 }
 
+.profile-header__topline {
+  display: flex;
+  justify-content: space-between;
+  padding: 11px 0 28px;
+  color: #637069;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.profile-header__main {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+}
+
+.profile-monogram {
+  display: grid;
+  width: 92px;
+  height: 106px;
+  place-items: center;
+  color: #f4f1e8;
+  background: #234c3e;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 34px;
+  letter-spacing: -.08em;
+}
+
+.profile-identity h1 {
+  margin: 0;
+  color: #17231f;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(38px, 5vw, 62px);
+  font-weight: 500;
+  line-height: .98;
+  letter-spacing: -.045em;
+}
+
+.profile-identity p {
+  margin: 12px 0 0;
+  color: #53615a;
+  font-size: 15px;
+}
+
+.profile-actions :deep(.q-btn) {
+  min-height: 42px;
+  padding: 0 20px;
+  border-radius: 2px;
+  font-size: 13px;
+}
+
+.profile-header__meta {
+  display: flex;
+  gap: 24px;
+  margin: 22px 0 0 116px;
+  color: #66736c;
+  font-size: 12px;
+}
+
+.profile-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.profile-status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6d8b59;
+}
+
+.profile-content {
+  margin-top: 4px;
+}
+
+.profile-content :deep(.q-card) {
+  border-color: #d2d8d3;
+  border-radius: 4px;
+  background: #fbfbf8;
+}
+
+.profile-content :deep(.q-card__section) {
+  padding: 24px 26px;
+}
+
+.profile-content :deep(.text-h6) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  color: #17231f;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -.025em;
+}
+
+.profile-content :deep(.text-h6::before) {
+  content: "";
+  width: 18px;
+  height: 1px;
+  flex: none;
+  background: #708078;
+}
+
+.profile-content :deep(.text-h6 > .q-icon) {
+  display: none;
+}
+
+.profile-content :deep(.text-body2) {
+  color: #45524c;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.profile-content :deep(.q-chip) {
+  color: #25483d !important;
+  background: #e8eee9 !important;
+  border-radius: 2px;
+}
+
+.profile-content :deep(.q-separator) {
+  background: #d9ded9;
+}
+
+.profile-facts {
+  display: grid;
+}
+
+.profile-facts > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid #e0e4e0;
+}
+
+.profile-facts > div:last-child { border-bottom: 0; }
+.profile-facts strong { color: #233d34; font-family: Georgia, "Times New Roman", serif; font-size: 18px; font-weight: 500; }
+.profile-facts span { color: #68746e; font-size: 12px; }
+
 .post-card {
-  border-left: 4px solid #667eea;
-  transition: all 0.3s ease;
+  border-left: 2px solid #315a4b !important;
 }
 
 .post-card:hover {
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-  transform: translateY(-2px);
+  border-color: #9eaaa3;
+}
+
+@media (max-width: 700px) {
+  .profile-shell { padding: 24px 16px 88px; }
+  .profile-header__main { grid-template-columns: 70px minmax(0, 1fr); gap: 16px; }
+  .profile-monogram { width: 70px; height: 82px; font-size: 27px; }
+  .profile-actions { grid-column: 1 / -1; }
+  .profile-header__meta { margin-left: 86px; flex-direction: column; gap: 6px; }
 }
 </style>

@@ -5,7 +5,7 @@
         <q-toolbar class="app-toolbar">
           <q-btn flat round dense icon="menu" class="lt-md" aria-label="Ouvrir la navigation" @click="drawerOpen = !drawerOpen" />
           <router-link to="/dashboard" class="brand brand--header">
-            <span class="brand__mark" aria-hidden="true">K</span><span>Konnekt</span>
+            <span class="brand__word">konnekt</span>
           </router-link>
           <q-space />
           <q-input v-model="searchQuery" dense borderless placeholder="Rechercher une personne, une compétence…" class="header-search gt-sm" aria-label="Rechercher" @keyup.enter="goToSearch">
@@ -103,4 +103,3 @@ const loadNotifications = async () => {
 onMounted(() => { loadNotifications(); notificationTimer = window.setInterval(loadNotifications, 30000); });
 onUnmounted(() => window.clearInterval(notificationTimer));
 </script>
-
