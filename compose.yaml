@@ -46,6 +46,7 @@ services:
       MONGODB_URI: mongodb://mongodb:27017/${MONGODB_DATABASE:-konnekt}
       MONGODB_DATABASE: ${MONGODB_DATABASE:-konnekt}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:8080,http://localhost:9000}
+      DEMO_DATA_ENABLED: ${DEMO_DATA_ENABLED:-true}
     ports:
       - "${API_PORT:-8081}:8080"
     depends_on:
@@ -76,4 +77,3 @@ services:
 volumes:
   mysql-data:
   mongo-data:
-

@@ -76,7 +76,7 @@ public class UtilisateurService {
 
     // UPDATE
     public Utilisateur updateUtilisateur(Integer id, Utilisateur utilisateurDetails) {
-        return utilisateurRepository.findById(id)
+        utilisateurRepository.findById(id)
                 .map(utilisateur -> {
                     if (utilisateurDetails.getNom() != null) {
                         utilisateur.setNom(utilisateurDetails.getNom());
@@ -104,24 +104,30 @@ public class UtilisateurService {
                     return utilisateurRepository.save(utilisateur);
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé avec l'ID: " + id));
+        return utilisateurRepository.findByIdWithSkills(id)
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé avec l'ID: " + id));
     }
 
     public Utilisateur updateVisibility(Integer id, Boolean visible) {
-        return utilisateurRepository.findById(id)
+        utilisateurRepository.findById(id)
                 .map(utilisateur -> {
                     utilisateur.setVisibiliteProfil(visible);
                     return utilisateurRepository.save(utilisateur);
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé avec l'ID: " + id));
+        return utilisateurRepository.findByIdWithSkills(id)
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé avec l'ID: " + id));
     }
 
     // UPDATE SKILLS
     public Utilisateur updateSkills(Integer id, Set<Skill> skills) {
-        return utilisateurRepository.findById(id)
+        utilisateurRepository.findById(id)
                 .map(utilisateur -> {
                     utilisateur.setSkills(skills);
                     return utilisateurRepository.save(utilisateur);
                 })
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé avec l'ID: " + id));
+        return utilisateurRepository.findByIdWithSkills(id)
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé avec l'ID: " + id));
     }
 

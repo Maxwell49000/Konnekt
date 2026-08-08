@@ -2,6 +2,7 @@ package com.example.reseau_social.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -47,5 +48,21 @@ public class UtilisateurServiceTest {
     public void countAllUtilisateurs_shouldReturnCount() {
         when(utilisateurRepository.count()).thenReturn(42L);
         assertEquals(42L, utilisateurService.countAllUtilisateurs());
+    }
+
+    @Test
+    public void updateUtilisateur_shouldReturnEntityWithInitializedSkills() {
+        Utilisateur existing = new Utilisateur("Martin", "Camille", "demo@konnekt.local");
+        existing.setIdUtilisateur(1);
+        Utilisateur details = new Utilisateur();
+        details.setTitreProfessionnel("Product designer senior");
+
+        when(utilisateurRepository.findById(1)).thenReturn(Optional.of(existing));
+        when(utilisateurRepository.save(existing)).thenReturn(existing);
+        when(utilisateurRepository.findByIdWithSkills(1)).thenReturn(Optional.of(existing));
+
+        Utilisateur updated = utilisateurService.updateUtilisateur(1, details);
+
+        assertEquals("Product designer senior", updated.getTitreProfessionnel());
     }
 }

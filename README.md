@@ -57,6 +57,18 @@ Une fois les services prêts :
 - Swagger UI : [http://localhost:8081/swagger-ui/index.html](http://localhost:8081/swagger-ui/index.html)
 - État de l’API : [http://localhost:8081/actuator/health](http://localhost:8081/actuator/health)
 
+### Compte de démonstration
+
+Docker initialise automatiquement un espace de démonstration réaliste et idempotent : trois profils, leurs compétences et expériences, ainsi que plusieurs publications. Les données ne sont pas dupliquées lors des redémarrages.
+
+Pour ouvrir la session principale, utiliser :
+
+```text
+demo@konnekt.local
+```
+
+Le seeding est activé par défaut dans Docker. Définir `DEMO_DATA_ENABLED=false` pour démarrer avec des bases vides.
+
 Arrêter l’environnement :
 
 ```bash
@@ -155,6 +167,7 @@ docker compose config
 | `MONGODB_DATABASE` | `konnekt` | Nom de la base MongoDB |
 | `CORS_ALLOWED_ORIGINS` | ports 9000 et 8080 | Origines web autorisées, séparées par des virgules |
 | `VITE_API_URL` | `http://localhost:8080/api` | Base URL utilisée par le frontend |
+| `DEMO_DATA_ENABLED` | `true` avec Docker | Initialise les données de présentation sans créer de doublons |
 
 ## Architecture
 
