@@ -6,6 +6,12 @@ Le projet a été restructuré en monorepo à partir de deux applications réali
 
 ## Aperçu
 
+![Écran de connexion de Konnekt](docs/screenshots/01-login.png)
+
+| Fil d’actualité | Profil professionnel |
+| --- | --- |
+| ![Fil d’actualité avec publications](docs/screenshots/02-feed.png) | ![Profil avec expériences et compétences](docs/screenshots/03-profile.png) |
+
 - Fil d’actualité avec publications, commentaires et mentions J’aime
 - Profils publics avec expériences et compétences
 - Demandes de connexion et suggestions de profils
@@ -130,6 +136,7 @@ docker compose config
 │   ├── api/                 # API Spring Boot
 │   └── web/                 # SPA Vue / Quasar
 ├── docs/
+│   ├── screenshots/         # Captures destinées au portfolio
 │   └── ARCHITECTURE.md      # Choix techniques et flux de données
 ├── .github/workflows/       # Intégration continue
 ├── compose.yaml             # Environnement complet
